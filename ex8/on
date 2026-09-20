@@ -1,0 +1,35 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        int n = nums.length;
+        int[] result = new int[n - k + 1];
+        int resultIdx = 0;
+        
+        // Deque to store indices of array elements
+        Deque<Integer> deque = new ArrayDeque<>();
+        
+        for (int i = 0; i < n; i++) {
+            // 1. Remove indices that fall outside the current window boundary
+            if (!deque.isEmpty() && deque.peekFirst() < i - k + 1) {
+                deque.pollFirst();
+            }
+            
+            // 2. Remove indices from back whose values are <= current element nums[i]
+            while (!deque.isEmpty() && nums[deque.peekLast()] <= nums[i]) {
+                deque.pollLast();
+            }
+            
+            // 3. Add current element index to the deque
+            deque.offerLast(i);
+            
+            // 4. Add the maximum (front of deque) to result once first window of size k is formed
+            if (i >= k - 1) {
+                result[resultIdx++] = nums[deque.peekFirst()];
+            }
+        }
+        
+        return result;
+    }
+}
